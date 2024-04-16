@@ -8,13 +8,18 @@ class Kategoria:
 
     def dodaj_podkategorie(self, podkategoria):
         self.podkategorie.append(podkategoria)
+    def znajdz_podkategorie(kategoria, nazwa_podkategorii):
+        for podkategoria in kategoria.podkategorie:
+            if podkategoria.nazwa == nazwa_podkategorii:
+                return podkategoria
+        return None
 
     def znajdz_podkategorie(self, nazwa):
         for podkategoria in self.podkategorie:
             if podkategoria.nazwa == nazwa:
                 return podkategoria
         return None
-
+        
 class Podkategoria:
     def __init__(self, nazwa):
         self.nazwa = nazwa
@@ -85,12 +90,13 @@ def dodaj_podkategorie(kategoria, podkategoria):
             break
     zapisz_dane(kategorie, "kategorie.json")
 
+def usun_podkategorie_z_kategorii(kategoria, podkategoria):
+    kategoria.podkategorie = [pk for pk in kategoria.podkategorie if pk.nazwa != podkategoria.nazwa]
+
 def usun_podkategorie(kategoria, podkategoria):
-    kategorie = odczytaj_dane("kategorie.json")
     for k in kategorie:
         if k.nazwa == kategoria.nazwa:
             k.podkategorie = [pk for pk in k.podkategorie if pk.nazwa != podkategoria.nazwa]
-            zapisz_dane(kategorie, "kategorie.json")
             return
     print(f"Błąd: Kategoria {kategoria.nazwa} nie została znaleziona.")
 

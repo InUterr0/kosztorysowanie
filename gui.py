@@ -11,6 +11,8 @@ from baza_danych import odczytaj_dane, zapisz_dane
 from kategorie import Kategoria, Podkategoria
 from dojazdy import OknoDojazdy
 import json
+from kategorie import znajdz_podkategorie
+from kategorie import usun_podkategorie_z_kategorii
 
 
 
@@ -34,43 +36,49 @@ class Aplikacja(tk.Tk):
         self.utworz_widgety()
 
     def utworz_widgety(self):
-        # Ramka dla kategorii, podkategorii i przycisków
+        # Ramka dla kategorii
         ramka_kategorie = ttk.Frame(self.ramka_kategorie_produkty)
-        ramka_kategorie.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
+        ramka_kategorie.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=False)
 
-        # Drzewo kategorii i podkategorii
+        # Drzewo kategorii
         self.drzewo_kategorie = ttk.Treeview(ramka_kategorie)
         self.drzewo_kategorie.pack(side=tk.TOP, padx=5, pady=5, fill=tk.BOTH, expand=True)
         self.drzewo_kategorie.bind("<<TreeviewSelect>>", self.wyswietl_produkty)
 
-        # Drzewo podkategorii
-        self.drzewo_podkategorie = ttk.Treeview(ramka_kategorie)
-        self.drzewo_podkategorie.pack(side=tk.TOP, padx=5, pady=5, fill=tk.BOTH, expand=True)
-        self.drzewo_podkategorie.bind("<<TreeviewSelect>>", self.zaznacz_podkategorie)
-        
-        # Przyciski dla kategorii i podkategorii
-        ramka_przyciski = ttk.Frame(ramka_kategorie)
-        ramka_przyciski.pack(side=tk.TOP, padx=5, pady=5)
+        # Przyciski dla kategorii
+        ramka_przyciski_kategorie = ttk.Frame(ramka_kategorie)
+        ramka_przyciski_kategorie.pack(side=tk.TOP, padx=5, pady=5)
 
-        self.przycisk_dodaj_kategorie = ttk.Button(ramka_przyciski, text="Dodaj kategorie", command=self.dodaj_kategorie)
+        self.przycisk_dodaj_kategorie = ttk.Button(ramka_przyciski_kategorie, text="Dodaj kategorie", command=self.dodaj_kategorie)
         self.przycisk_dodaj_kategorie.pack(side=tk.LEFT, padx=5)
 
-        self.przycisk_usun_kategorie = ttk.Button(ramka_przyciski, text="Usun kategorie", command=self.usun_kategorie)
+        self.przycisk_usun_kategorie = ttk.Button(ramka_przyciski_kategorie, text="Usun kategorie", command=self.usun_kategorie)
         self.przycisk_usun_kategorie.pack(side=tk.LEFT, padx=5)
 
-        self.przycisk_dodaj_podkategorie = ttk.Button(ramka_przyciski, text="Dodaj podkategorie", command=self.dodaj_podkategorie)
+        # Ramka dla podkategorii i produktów
+        ramka_produkty = ttk.Frame(self.ramka_kategorie_produkty)
+        ramka_produkty.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        # Drzewo podkategorii
+        self.drzewo_podkategorie = ttk.Treeview(ramka_produkty, height=5)
+        self.drzewo_podkategorie.pack(side=tk.TOP, padx=5, pady=5, fill=tk.X, expand=False)
+        self.drzewo_podkategorie.bind("<<TreeviewSelect>>", self.wyswietl_produkty_podkategorii)
+
+        # Przyciski dla podkategorii
+        ramka_przyciski_podkategorie = ttk.Frame(ramka_produkty)
+        ramka_przyciski_podkategorie.pack(side=tk.TOP, padx=5, pady=5)
+
+        self.przycisk_dodaj_podkategorie = ttk.Button(ramka_przyciski_podkategorie, text="Dodaj podkategorie", command=self.dodaj_podkategorie)
         self.przycisk_dodaj_podkategorie.pack(side=tk.LEFT, padx=5)
 
-        self.przycisk_usun_podkategorie = ttk.Button(ramka_przyciski, text="Usun podkategorie", command=self.usun_podkategorie)
+        self.przycisk_usun_podkategorie = ttk.Button(ramka_przyciski_podkategorie, text="Usun podkategorie", command=self.usun_podkategorie)
         self.przycisk_usun_podkategorie.pack(side=tk.LEFT, padx=5)
-
-        # Ramka dla listy produktów i przycisków
-        ramka_produkty = ttk.Frame(self.ramka_kategorie_produkty)
-        ramka_produkty.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         # Lista produktów
         self.lista_produkty = tk.Listbox(ramka_produkty)
         self.lista_produkty.pack(side=tk.TOP, padx=5, pady=5, fill=tk.BOTH, expand=True)
+
+        # Reszta kodu...
 
         # Przyciski dla produktów
         ramka_przyciski_produkty = ttk.Frame(ramka_produkty)
@@ -167,36 +175,21 @@ class Aplikacja(tk.Tk):
             self.wybrana_podkategoria = None
 
     def usun_podkategorie(self):
-        print("Usuwanie podkategorii...")
         zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
-        if zaznaczona_kategoria:
-            print(f"Zaznaczona kategoria: {zaznaczona_kategoria.nazwa}")
-            zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
-            if zaznaczona_podkategoria:
-                print(f"Zaznaczona podkategoria: {zaznaczona_podkategoria.nazwa}")
-                confirmation = messagebox.askyesno("Potwierdzenie", f"Czy na pewno chcesz usunąć podkategorię {zaznaczona_podkategoria.nazwa}?")
-                if confirmation:
-                    zaznaczona_kategoria.usun_podkategorie(zaznaczona_podkategoria)
-                    print(f"Podkategorie zaznaczonej kategorii po usunięciu: {[p.nazwa for p in zaznaczona_kategoria.podkategorie]}")
-                    
-                    kategorie = odczytaj_dane("kategorie.json")
-                    for kategoria in kategorie:
-                        if kategoria.nazwa == zaznaczona_kategoria.nazwa:
-                            kategoria.usun_podkategorie(zaznaczona_podkategoria)
-                            break
+        zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
+        if zaznaczona_kategoria and zaznaczona_podkategoria:
+            confirmation = messagebox.askyesno("Potwierdzenie", f"Czy na pewno chcesz usunac podkategorie {zaznaczona_podkategoria.nazwa}?")
+            if confirmation:
+                kategorie = odczytaj_dane("kategorie.json")
+                kategoria = next((k for k in kategorie if k.nazwa == zaznaczona_kategoria.nazwa), None)
+                if kategoria:
+                    usun_podkategorie_z_kategorii(kategoria, zaznaczona_podkategoria)
                     zapisz_dane(kategorie, "kategorie.json")
-                    
-                    self.odswierz_drzewo_kategorie()
-                    self.wyswietl_produkty(None)
-                    print("Podkategoria usunięta i dane zapisane.")
-                else:
-                    print("Anulowano usuwanie podkategorii.")
-            else:
-                messagebox.showinfo("Informacja", "Nie zaznaczono podkategorii.")
+                    self.wyswietl_podkategorie(zaznaczona_kategoria)  # Odswiez widok podkategorii
+                    self.drzewo_kategorie.selection_set(self.drzewo_kategorie.parent(self.drzewo_kategorie.selection()))  # Zaznacz kategorie nadrzedna
+                    self.drzewo_kategorie.focus(self.drzewo_kategorie.parent(self.drzewo_kategorie.selection()))  # Ustaw fokus na kategorii nadrzednej
         else:
-            messagebox.showinfo("Informacja", "Nie zaznaczono kategorii.")
-
-
+            messagebox.showinfo("Informacja", "Nie zaznaczono kategorii lub podkategorii.")
 
     def znajdz_kategorie(self, nazwa_kategorii):
         kategorie = odczytaj_dane("kategorie.json")
@@ -301,16 +294,22 @@ class Aplikacja(tk.Tk):
 
 
     def wyswietl_produkty(self, event):
-        zaznaczony_element = self.drzewo_kategorie.selection()
-        if zaznaczony_element:
-            nazwa_elementu = self.drzewo_kategorie.item(zaznaczony_element, "text")
-            kategoria = self.znajdz_kategorie(nazwa_elementu)
-            if kategoria:
-                self.wyswietl_produkty_kategoria(kategoria)
-            else:
-                podkategoria = self.znajdz_podkategorie(nazwa_elementu)
-                if podkategoria:
-                    self.wyswietl_produkty_podkategoria(podkategoria)
+        zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
+        if zaznaczona_kategoria:
+            self.drzewo_podkategorie.delete(*self.drzewo_podkategorie.get_children())
+            for podkategoria in zaznaczona_kategoria.podkategorie:
+                self.drzewo_podkategorie.insert("", "end", text=podkategoria.nazwa)
+            self.lista_produkty.delete(0, tk.END)
+        else:
+            self.drzewo_podkategorie.delete(*self.drzewo_podkategorie.get_children())
+            self.lista_produkty.delete(0, tk.END)
+
+    def wyswietl_produkty_podkategorii(self, event):
+        zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
+        if zaznaczona_podkategoria:
+            self.lista_produkty.delete(0, tk.END)
+            for produkt in zaznaczona_podkategoria.produkty:
+                self.lista_produkty.insert(tk.END, f"{produkt.nazwa} - {produkt.cena} sek")
         else:
             self.lista_produkty.delete(0, tk.END)
 
@@ -562,7 +561,7 @@ class Aplikacja(tk.Tk):
                         zapisz_dane(kategorie, "kategorie.json")
                         self.odswierz_liste_produkty()
                     else:
-                        print(f"Produkt {nazwa_produktu} nie znajduje się w podkategorii {podkategoria.nazwa}")
+                        print(f"Produkt {nazwa_produktu} nie znajduje sie w podkategorii {podkategoria.nazwa}")
                 else:
                     print("Nie wybrano produktu.")
             else:
@@ -598,7 +597,7 @@ class Aplikacja(tk.Tk):
                                     zapisz_dane(pobierz_zawartosc_koszyka(), "koszyk.json")
                                     break
                             else:
-                                print(f"Produkt {nazwa_produktu} nie znajduje się w kategorii {nazwa_elementu}")
+                                print(f"Produkt {nazwa_produktu} nie znajduje sie w kategorii {nazwa_elementu}")
                         else:
                             podkategoria = self.znajdz_podkategorie(nazwa_elementu)
                             if podkategoria:
@@ -609,13 +608,13 @@ class Aplikacja(tk.Tk):
                                     self.odswierz_podsumowanie()
                                     zapisz_dane(pobierz_zawartosc_koszyka(), "koszyk.json")
                                 else:
-                                    print(f"Produkt {nazwa_produktu} nie znajduje się w podkategorii {nazwa_elementu}")
+                                    print(f"Produkt {nazwa_produktu} nie znajduje sie w podkategorii {nazwa_elementu}")
                             else:
                                 print(f"Nie znaleziono podkategorii {nazwa_elementu}")
                     else:
                         print("Nie wybrano elementu w drzewie kategorii.")
             else:
-                print(f"Nieprawidłowy format informacji o produkcie: {produkt_info}")
+                print(f"Nieprawidlowy format informacji o produkcie: {produkt_info}")
 
 
     def usun_z_koszyka(self):
@@ -691,14 +690,12 @@ class Aplikacja(tk.Tk):
             window.geometry(f"+{x}+{y}")
 
     def pobierz_zaznaczona_podkategorie(self):
-        zaznaczony_element = self.drzewo_kategorie.selection()
+        zaznaczony_element = self.drzewo_podkategorie.focus()
         if zaznaczony_element:
-            nazwa_elementu = self.drzewo_kategorie.item(zaznaczony_element, "text")
             zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
-            if zaznaczona_kategoria:
-                podkategoria = znajdz_podkategorie(zaznaczona_kategoria, nazwa_elementu)
-                if podkategoria:
-                    return podkategoria
+            nazwa_elementu = self.drzewo_podkategorie.item(zaznaczony_element)['text']
+            podkategoria = znajdz_podkategorie(zaznaczona_kategoria, nazwa_elementu)
+            return podkategoria
         return None
 
 
@@ -731,10 +728,6 @@ class Aplikacja(tk.Tk):
     def dodaj_koszt_dojazdu(self, koszt):
         self.koszt_dojazdu = koszt
         self.odswierz_podsumowanie()
-
-
-
-
 
 if __name__ == "__main__":
     app = Aplikacja()

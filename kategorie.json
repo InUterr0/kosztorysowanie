@@ -1,9 +1,9 @@
 [
   {
-    "nazwa": "staket mastaren",
+    "nazwa": "bramy",
     "podkategorie": [
       {
-        "nazwa": "bramy",
+        "nazwa": "material i robocizna",
         "produkty": [
           {
             "nazwa": "filarek 95x95 1,8m impregnowany",
@@ -61,10 +61,6 @@
             "typ": "robocizna"
           }
         ]
-      },
-      {
-        "nazwa": "plotki",
-        "produkty": []
       }
     ]
   },
@@ -145,10 +141,6 @@
             "typ": "robocizna"
           }
         ]
-      },
-      {
-        "nazwa": "test",
-        "produkty": []
       }
     ]
   }
