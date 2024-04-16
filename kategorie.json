@@ -1,0 +1,155 @@
+[
+  {
+    "nazwa": "staket mastaren",
+    "podkategorie": [
+      {
+        "nazwa": "bramy",
+        "produkty": [
+          {
+            "nazwa": "filarek 95x95 1,8m impregnowany",
+            "cena": 115.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "22x70x3600 nieimpregnowane",
+            "cena": 54.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "grovbetong",
+            "cena": 50.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "grunt bialy 3l",
+            "cena": 340.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "farba biala 3l",
+            "cena": 730.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "drobne materialy zuzywalne",
+            "cena": 100.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "gjutror 150mm x 1,2m",
+            "cena": 45.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "zawias do bramki - czarny - 500mm - vintage",
+            "cena": 200.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "zamek furtki czarny vintage",
+            "cena": 75.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "zamek bramy do podloza czarny",
+            "cena": 150.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "montaz bramy drewnianej z malowaniem 5m dlugosci + furtka 1,2m wysokosci",
+            "cena": 12800.0,
+            "typ": "robocizna"
+          }
+        ]
+      },
+      {
+        "nazwa": "plotki",
+        "produkty": []
+      }
+    ]
+  },
+  {
+    "nazwa": "Tarasy",
+    "podkategorie": [
+      {
+        "nazwa": "Material",
+        "produkty": [
+          {
+            "nazwa": "deska tarasowa 28x95x4200",
+            "cena": 72.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "regel 45x145x4200 ",
+            "cena": 145.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "kafelka betonowa",
+            "cena": 31.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "materialy zuzywalne",
+            "cena": 100.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "metalowe kontowniki",
+            "cena": 25.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "balsko",
+            "cena": 18.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "2 tony makadam 9-16 z dostawa",
+            "cena": 1650.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "mata - markduk 15m2",
+            "cena": 70.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "dostawa materialu bauhaus",
+            "cena": 2000.0,
+            "typ": "material"
+          },
+          {
+            "nazwa": "bigbag duzy ",
+            "cena": 160.0,
+            "typ": "material"
+          }
+        ]
+      },
+      {
+        "nazwa": "robocizna",
+        "produkty": [
+          {
+            "nazwa": "taras standardowy na m2 ",
+            "cena": 1140.0,
+            "typ": "robocizna"
+          },
+          {
+            "nazwa": "demontaz tarasu na m2",
+            "cena": 188.0,
+            "typ": "robocizna"
+          },
+          {
+            "nazwa": "wywiezienie smieci 1 bigbag ",
+            "cena": 1600.0,
+            "typ": "robocizna"
+          }
+        ]
+      },
+      {
+        "nazwa": "test",
+        "produkty": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "nazwa": "Staket Mastaren",
+    "podkategorie": [
+      {
+        "nazwa": "Bramy",
+        "produkty": [
+          {
+            "nazwa": "Stolpe 95x95 zdobione 1,8m",
+            "cena": 300.0,
+            "typ": "material"
+          }
+        ]
+      }
+    ]
+  }
+]

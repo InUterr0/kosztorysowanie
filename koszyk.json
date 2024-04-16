@@ -1,0 +1,80 @@
+[
+  {
+    "nazwa": "deska tarasowa 28x95x4200",
+    "cena": 72.0,
+    "typ": "material",
+    "ilosc": 92
+  },
+  {
+    "nazwa": "regel 45x145x4200 ",
+    "cena": 145.0,
+    "typ": "material",
+    "ilosc": 20
+  },
+  {
+    "nazwa": "kafelka betonowa",
+    "cena": 31.0,
+    "typ": "material",
+    "ilosc": 25
+  },
+  {
+    "nazwa": "materialy zuzywalne",
+    "cena": 100.0,
+    "typ": "material",
+    "ilosc": 20
+  },
+  {
+    "nazwa": "metalowe kontowniki",
+    "cena": 25.0,
+    "typ": "material",
+    "ilosc": 10
+  },
+  {
+    "nazwa": "balsko",
+    "cena": 18.0,
+    "typ": "material",
+    "ilosc": 34
+  },
+  {
+    "nazwa": "2 tony makadam 9-16 z dostawa",
+    "cena": 1650.0,
+    "typ": "material",
+    "ilosc": 1
+  },
+  {
+    "nazwa": "mata - markduk 15m2",
+    "cena": 70.0,
+    "typ": "material",
+    "ilosc": 2
+  },
+  {
+    "nazwa": "dostawa materialu bauhaus",
+    "cena": 2000.0,
+    "typ": "material",
+    "ilosc": 1
+  },
+  {
+    "nazwa": "taras standardowy na m2 ",
+    "cena": 1140.0,
+    "typ": "robocizna",
+    "ilosc": 34
+  },
+  {
+    "nazwa": "bigbag duzy ",
+    "cena": 160.0,
+    "typ": "material",
+    "ilosc": 2
+  },
+  {
+    "nazwa": "wywiezienie smieci 1 bigbag ",
+    "cena": 1600.0,
+    "typ": "robocizna",
+    "ilosc": 2
+  },
+  {
+    "nazwa": "demontaz tarasu na m2",
+    "cena": 188.0,
+    "typ": "robocizna",
+    "ilosc": 20
+  }
+]
