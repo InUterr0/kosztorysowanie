@@ -30,6 +30,7 @@ class Aplikacja(tk.Tk):
         self.ramka_kategorie_produkty = ttk.Frame(self)
         self.ramka_kategorie_produkty.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
+
         # Odczytaj ostatnio zapisane wartosci z pliku konfiguracyjnego
         self.odczytaj_konfiguracje()
 
@@ -154,6 +155,8 @@ class Aplikacja(tk.Tk):
         # Przycisk "Oblicz dojazdy"
         przycisk_oblicz_dojazdy = ttk.Button(ramka_przyciski_koszyk, text="Oblicz dojazdy", command=self.oblicz_dojazdy)
         przycisk_oblicz_dojazdy.pack(side=tk.LEFT, padx=5)
+
+
 
         self.odswierz_widgety()
 
@@ -462,75 +465,74 @@ class Aplikacja(tk.Tk):
             zapisz_dane(odczytaj_dane("kategorie.json"), "kategorie.json")
 
     def dodaj_produkt(self):
-        zaznaczony_element = self.drzewo_kategorie.selection()
-        if zaznaczony_element:
-            nazwa_elementu = self.drzewo_kategorie.item(zaznaczony_element, "text")
-            podkategoria = self.znajdz_podkategorie(nazwa_elementu)
-            if podkategoria:
-                okno_dodaj_produkt = tk.Toplevel(self)
-                okno_dodaj_produkt.title("Dodaj produkt")
-                self.center_window(okno_dodaj_produkt, screen_number=0)  # Wysrodkowanie okna dialogowego
+        zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
+        if zaznaczona_podkategoria:
+            okno_dodaj_produkt = tk.Toplevel(self)
+            okno_dodaj_produkt.title("Dodaj produkt")
+            self.center_window(okno_dodaj_produkt, screen_number=0)  # Wysrodkowanie okna dialogowego
 
-                ramka_nazwa = ttk.Frame(okno_dodaj_produkt)
-                ramka_nazwa.pack(fill=tk.X, padx=5, pady=5)
-                etykieta_nazwa = ttk.Label(ramka_nazwa, text="Nazwa produktu:")
-                etykieta_nazwa.pack(side=tk.LEFT)
-                pole_nazwa = ttk.Entry(ramka_nazwa)
-                pole_nazwa.pack(side=tk.LEFT, fill=tk.X, expand=True)
+            ramka_nazwa = ttk.Frame(okno_dodaj_produkt)
+            ramka_nazwa.pack(fill=tk.X, padx=5, pady=5)
+            etykieta_nazwa = ttk.Label(ramka_nazwa, text="Nazwa produktu:")
+            etykieta_nazwa.pack(side=tk.LEFT)
+            pole_nazwa = ttk.Entry(ramka_nazwa)
+            pole_nazwa.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-                ramka_typ = ttk.Frame(okno_dodaj_produkt)
-                ramka_typ.pack(fill=tk.X, padx=5, pady=5)
-                etykieta_typ = ttk.Label(ramka_typ, text="Typ produktu:")
-                etykieta_typ.pack(side=tk.LEFT)
-                typy_produktow = ["robocizna", "material", "podwykonawca"]
-                pole_typ = ttk.Combobox(ramka_typ, values=typy_produktow, state="readonly")
-                pole_typ.pack(side=tk.LEFT, fill=tk.X, expand=True)
+            ramka_typ = ttk.Frame(okno_dodaj_produkt)
+            ramka_typ.pack(fill=tk.X, padx=5, pady=5)
+            etykieta_typ = ttk.Label(ramka_typ, text="Typ produktu:")
+            etykieta_typ.pack(side=tk.LEFT)
+            typy_produktow = ["robocizna", "material", "podwykonawca"]
+            pole_typ = ttk.Combobox(ramka_typ, values=typy_produktow, state="readonly")
+            pole_typ.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-                def dodaj():
-                    nazwa_produktu = pole_nazwa.get()
-                    typ_produktu = pole_typ.get()
-                    
-                    if nazwa_produktu and typ_produktu:
-                        if typ_produktu == "robocizna":
-                            ilosc_godzin = simpledialog.askfloat("Ilosc godzin", "Podaj ilosc godzin:")
-                            if ilosc_godzin:
-                                cena_produktu = ilosc_godzin * 400  # Stawka 400 sek/h
-                                nowy_produkt = Produkt(nazwa_produktu, cena_produktu, typ_produktu, ilosc_godzin)
-                                podkategoria.dodaj_produkt(nowy_produkt)
-                                
-                                kategorie = odczytaj_dane("kategorie.json")
-                                for kategoria in kategorie:
-                                    pk = self.znajdz_podkategorie_po_nazwie(kategoria, podkategoria.nazwa)
+            def dodaj(zaznaczona_podkategoria=zaznaczona_podkategoria):
+                nazwa_produktu = pole_nazwa.get()
+                typ_produktu = pole_typ.get()
+
+                if nazwa_produktu and typ_produktu:
+                    if typ_produktu == "robocizna":
+                        ilosc_godzin = simpledialog.askfloat("Ilosc godzin", "Podaj ilosc godzin:")
+                        if ilosc_godzin:
+                            cena_produktu = ilosc_godzin * 400  # Stawka 400 sek/h
+                            nowy_produkt = Produkt(nazwa_produktu, cena_produktu, typ_produktu, ilosc_godzin)
+                            zaznaczona_podkategoria.dodaj_produkt(nowy_produkt)
+
+                            kategorie = odczytaj_dane("kategorie.json")
+                            zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
+                            for kategoria in kategorie:
+                                if kategoria.nazwa == zaznaczona_kategoria.nazwa:
+                                    pk = self.znajdz_podkategorie_po_nazwie(kategoria, zaznaczona_podkategoria.nazwa)
                                     if pk:
                                         pk.dodaj_produkt(nowy_produkt)
                                         break
-                                zapisz_dane(kategorie, "kategorie.json")
-                                
-                                self.odswierz_liste_produkty()
-                                okno_dodaj_produkt.destroy()
-                        else:
-                            cena_produktu = simpledialog.askfloat("Cena produktu", "Podaj cene produktu:")
-                            if cena_produktu:
-                                nowy_produkt = Produkt(nazwa_produktu, cena_produktu, typ_produktu)
-                                podkategoria.dodaj_produkt(nowy_produkt)
-                                
-                                kategorie = odczytaj_dane("kategorie.json")
-                                for kategoria in kategorie:
-                                    pk = self.znajdz_podkategorie_po_nazwie(kategoria, podkategoria.nazwa)
-                                    if pk:
-                                        pk.dodaj_produkt(nowy_produkt)
-                                        break
-                                zapisz_dane(kategorie, "kategorie.json")
-                                
-                                self.odswierz_liste_produkty()
-                                okno_dodaj_produkt.destroy()
+                            zapisz_dane(kategorie, "kategorie.json")
+
+                            self.odswierz_liste_produkty()
+                            okno_dodaj_produkt.destroy()
                     else:
-                        messagebox.showerror("Blad", "Wypelnij wszystkie pola!")
+                        cena_produktu = simpledialog.askfloat("Cena produktu", "Podaj cene produktu:")
+                        if cena_produktu:
+                            nowy_produkt = Produkt(nazwa_produktu, cena_produktu, typ_produktu)
+                            zaznaczona_podkategoria.dodaj_produkt(nowy_produkt)
 
-                przycisk_dodaj = ttk.Button(okno_dodaj_produkt, text="Dodaj", command=dodaj)
-                przycisk_dodaj.pack(pady=5)
-            else:
-                messagebox.showerror("Blad", "Nie wybrano podkategorii!")
+                            kategorie = odczytaj_dane("kategorie.json")
+                            zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
+                            for kategoria in kategorie:
+                                if kategoria.nazwa == zaznaczona_kategoria.nazwa:
+                                    pk = self.znajdz_podkategorie_po_nazwie(kategoria, zaznaczona_podkategoria.nazwa)
+                                    if pk:
+                                        pk.dodaj_produkt(nowy_produkt)
+                                        break
+                            zapisz_dane(kategorie, "kategorie.json")
+
+                            self.odswierz_liste_produkty()
+                            okno_dodaj_produkt.destroy()
+                else:
+                    messagebox.showerror("Blad", "Wypelnij wszystkie pola!")
+
+            przycisk_dodaj = ttk.Button(okno_dodaj_produkt, text="Dodaj", command=lambda: dodaj(zaznaczona_podkategoria))
+            przycisk_dodaj.pack(pady=5)
         else:
             messagebox.showerror("Blad", "Nie wybrano podkategorii!")
 
@@ -542,35 +544,30 @@ class Aplikacja(tk.Tk):
         return None
 
     def usun_produkt(self):
-        zaznaczony_element = self.drzewo_kategorie.selection()
-        if zaznaczony_element:
-            nazwa_elementu = self.drzewo_kategorie.item(zaznaczony_element, "text")
-            podkategoria = self.znajdz_podkategorie(nazwa_elementu)
-            if podkategoria:
-                zaznaczony_indeks = self.lista_produkty.curselection()
-                if zaznaczony_indeks:
-                    nazwa_produktu = self.lista_produkty.get(zaznaczony_indeks).split(" - ")[0]
-                    produkt = podkategoria.znajdz_produkt(nazwa_produktu)
-                    if produkt:
-                        kategorie = odczytaj_dane("kategorie.json")
-                        for kategoria in kategorie:
-                            for pk in kategoria.podkategorie:
-                                if pk.nazwa == podkategoria.nazwa:
-                                    pk.produkty = [p for p in pk.produkty if p.nazwa != produkt.nazwa]
-                                    break
-                        zapisz_dane(kategorie, "kategorie.json")
-                        self.odswierz_liste_produkty()
-                    else:
-                        print(f"Produkt {nazwa_produktu} nie znajduje sie w podkategorii {podkategoria.nazwa}")
+        zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
+        if zaznaczona_podkategoria:
+            zaznaczony_indeks = self.lista_produkty.curselection()
+            if zaznaczony_indeks:
+                nazwa_produktu = self.lista_produkty.get(zaznaczony_indeks).split(" - ")[0]
+                produkt = zaznaczona_podkategoria.znajdz_produkt(nazwa_produktu)
+                if produkt:
+                    zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
+                    kategorie = odczytaj_dane("kategorie.json")
+                    for kategoria in kategorie:
+                        if kategoria.nazwa == zaznaczona_kategoria.nazwa:
+                            pk = self.znajdz_podkategorie_po_nazwie(kategoria, zaznaczona_podkategoria.nazwa)
+                            if pk:
+                                pk.usun_produkt(produkt)
+                                break
+                    zapisz_dane(kategorie, "kategorie.json")
+                    self.odswierz_liste_produkty()
                 else:
-                    print("Nie wybrano produktu.")
+                    print(f"Produkt {nazwa_produktu} nie znajduje sie w podkategorii {zaznaczona_podkategoria.nazwa}")
             else:
-                print("Nie wybrano podkategorii.")
+                print("Nie wybrano produktu.")
         else:
-            print("Nie wybrano elementu w drzewie kategorii.")
-
-
-
+            print("Nie wybrano podkategorii.")
+            
     def dodaj_do_koszyka(self):
         zaznaczony_indeks = self.lista_produkty.curselection()
         if zaznaczony_indeks:
@@ -599,10 +596,10 @@ class Aplikacja(tk.Tk):
                             else:
                                 print(f"Produkt {nazwa_produktu} nie znajduje sie w kategorii {nazwa_elementu}")
                         else:
-                            podkategoria = self.znajdz_podkategorie(nazwa_elementu)
+                            zaznaczona_podkategoria = self.pobierz_zaznaczona_podkategorie()
                             if podkategoria:
                                 produkt = podkategoria.znajdz_produkt(nazwa_produktu)
-                                if produkt:
+                                if zaznaczony_indeks:
                                     dodaj_do_koszyka(produkt, ilosc)
                                     self.odswierz_liste_koszyk()
                                     self.odswierz_podsumowanie()
@@ -692,14 +689,12 @@ class Aplikacja(tk.Tk):
     def pobierz_zaznaczona_podkategorie(self):
         zaznaczony_element = self.drzewo_podkategorie.focus()
         if zaznaczony_element:
+            nazwa_podkategorii = self.drzewo_podkategorie.item(zaznaczony_element)['text']
             zaznaczona_kategoria = self.pobierz_zaznaczona_kategorie()
-            nazwa_elementu = self.drzewo_podkategorie.item(zaznaczony_element)['text']
-            podkategoria = znajdz_podkategorie(zaznaczona_kategoria, nazwa_elementu)
-            return podkategoria
+            if zaznaczona_kategoria:
+                podkategoria = zaznaczona_kategoria.znajdz_podkategorie(nazwa_podkategorii)
+                return podkategoria
         return None
-
-
-
     
     def odczytaj_konfiguracje(self):
         try:

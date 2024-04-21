@@ -143,5 +143,18 @@
         ]
       }
     ]
+  },
+  {
+    "nazwa": "Plot farmerski wbijany",
+    "podkategorie": [
+      {
+        "nazwa": "robocizna",
+        "produkty": []
+      },
+      {
+        "nazwa": "material",
+        "produkty": []
+      }
+    ]
   }
 ]
